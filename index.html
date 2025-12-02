@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Trandy Construction - Modern Builds for Modern Living</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Construction Colors: Orange/Blue */
+            --primary-color: #E9762F; 
+            --secondary-color: #1A3E5D; 
+            --text-color-light: #F0F0F0;
+            --text-color-dark: #333333;
+            --bg-dark: #1A1A1A;
+            --bg-light: #FFFFFF;
+            --header-height: 72px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color-dark);
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        h1,h2,h3,h4,h5,h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--secondary-color);
+            margin-bottom: 0.8em;
+        }
+
+        .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+
+        /* Header */
+        header {
+            background-color: var(--bg-dark);
+            color: var(--text-color-light);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease, transform 300ms ease-in-out;
+        }
+        header.scrolled { background-color: rgba(26,26,26,0.9); }
+        header .container { display:flex; justify-content:space-between; align-items:center; }
+
+        .logo { font-family:'Playfair Display', serif; font-size:1.8em; font-weight:bold; color:var(--primary-color); text-decoration:none; letter-spacing:1px; animation: fadeInDown 1s ease-out; }
+
+        nav ul { list-style:none; display:flex; }
+        nav ul li { margin-left:30px; }
+        nav ul li a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1.1em;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+            animation: fadeInRight 1s ease-out;
+        }
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        nav ul li a:hover::after { width:100%; left:0; background:var(--primary-color); }
+        nav ul li a:hover { color:var(--primary-color); transform: translateY(-2px); }
+
+        .hamburger { display:none; flex-direction:column; cursor:pointer; animation: fadeInRight 1s ease-out; }
+        .hamburger .bar { width:25px; height:3px; background-color:var(--text-color-light); margin:4px 0; transition:0.4s; }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            color: var(--text-color-light);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            overflow:hidden;
+            padding-top: calc(var(--header-height));
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .hero-background {
+            position:absolute; top:0; left:0; width:100%; height:100%;
+            background-size:cover; background-position:center;
+            transition: background-image 1.5s ease-in-out, opacity 1.5s ease-in-out;
+            opacity:0; z-index:1;
+        }
+        .hero-background.active { opacity:1; }
+
+        .hero-overlay { position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; }
+        .hero-content { position:relative; z-index:3; max-width:900px; padding:20px; }
+        .hero h1 { font-size:4.5em; margin-bottom:20px; color:var(--text-color-light); text-shadow:2px 2px 8px rgba(0,0,0,0.7); animation:fadeInUp 1s ease-out; }
+        .hero p { font-size:1.6em; margin-bottom:40px; color:var(--text-color-light); text-shadow:1px 1px 6px rgba(0,0,0,0.6); animation:fadeInUp 1.2s ease-out; }
+
+        .btn {
+            display:inline-block; background-color:var(--primary-color); color:var(--text-color-light);
+            padding:15px 35px; text-decoration:none; border-radius:5px; font-weight:700; font-size:1.1em;
+            transition:background-color 0.3s ease, transform 0.2s ease; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+            animation: zoomIn 1.5s ease-out;
+        }
+        .btn:hover { background-color:#B5A07F; transform: translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.4); }
+
+        /* Sections */
+        section:not(.hero) {
+            padding: 80px 0;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            scroll-margin-top: calc(var(--header-height) + 16px);
+        }
+        section:not(.hero).visible { opacity:1; transform: translateY(0); }
+
+        section:nth-of-type(odd) { background-color: var(--bg-light); }
+        section:nth-of-type(even) { background-color: #f8f8f8; }
+
+        .section-title {
+            color: var(--secondary-color); margin-bottom:60px; position:relative;
+            display:inline-block; padding-bottom:10px; font-size:3em;
+        }
+        .section-title::after { content:''; position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:80px; height:3px; background-color:var(--primary-color); }
+
+        /* About */
+        #about .container { display:flex; align-items:center; gap:50px; text-align:left; }
+        #about .about-img {
+            flex: 1;
+            min-width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            animation: zoomIn 1s ease-out;
+            position: relative;
+            margin: 0;
+            height: 450px;
+        }
+
+        .about-image-slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            transition: opacity 1.5s ease-in-out; opacity: 0; z-index: 1;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .about-image-slide.active { opacity: 1; z-index: 2; }
+
+        .about-words-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; font-family: 'Playfair Display', serif; font-size: 2.5em;
+            font-weight: bold; text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+            padding: 20px; box-sizing: border-box; pointer-events: none;
+        }
+
+        .about-word {
+            opacity: 0; transform: translateY(20px) scale(0.8);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            margin: 5px 0; text-align: center; width: 100%;
+        }
+        .about-word.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        #about .about-content { flex:2; }
+        #about .about-content h2 { text-align:center; margin-bottom:20px; }
+
+        /* Services */
+        .services-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:40px; margin-top:50px; }
+        .service-item {
+            background-color:var(--bg-light); padding:30px; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; text-align:center; overflow:hidden; position:relative; min-height:1px;
+        }
+        .service-item::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(45deg, rgba(160,138,102,0.1), rgba(44,62,80,0.1)); opacity:0; transition:opacity 0.3s ease; z-index:1; }
+        .service-item:hover::before { opacity:1; }
+        .service-item i { font-size:3em; color:var(--primary-color); margin-bottom:20px; transition:transform 0.3s ease; position:relative; z-index:2; }
+        .service-item:hover i { transform:scale(1.1); }
+        .service-item h3 { color:var(--secondary-color); margin-bottom:15px; position:relative; z-index:2; }
+        .service-item p { color:var(--text-color-dark); position:relative; z-index:2; }
+
+        /* Gallery */
+        .gallery-nav { margin-bottom:40px; }
+        .gallery-nav button { background:none; border:none; color:var(--secondary-color); font-size:1.1em; font-weight:500; margin:0 15px; cursor:pointer; padding-bottom:5px; position:relative; transition:color 0.3s ease; }
+        .gallery-nav button::after { content:''; position:absolute; width:0; height:2px; display:block; margin-top:5px; left:50%; transform:translateX(-50%); background:var(--primary-color); transition:width 0.3s ease; }
+        .gallery-nav button.active, .gallery-nav button:hover { color:var(--primary-color); }
+        .gallery-nav button.active::after, .gallery-nav button:hover::after { width:100%; }
+
+        .gallery-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-top:30px; }
+        .gallery-item { overflow:hidden; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.1); position:relative; cursor:zoom-in; }
+        .gallery-item img { width:100%; height:250px; object-fit:cover; display:block; transition:transform 0.4s ease; }
+        .gallery-item:hover img { transform:scale(1.08); }
+        .gallery-item-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background: rgba(44, 62, 80, 0.7); color:var(--text-color-light); display:flex; flex-direction:column; justify-content:center; align-items:center; opacity:0; transition:opacity 0.3s ease; }
+        .gallery-item:hover .gallery-item-overlay { opacity:1; }
+        .gallery-item-overlay h4 { color:var(--text-color-light); margin-bottom:10px; font-size:1.3em; }
+        .gallery-item-overlay p { font-size:0.9em; text-align:center; padding:0 15px; }
+
+        /* Facebook Section Styles (Corrected) */
+        #facebook-feed {
+            background-color: var(--bg-light);
+            text-align: center;
+        }
+        .fb-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+       .fb-plugin-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+    display: inline-block;
+    width: 100%;             /* This makes it fit the screen width */
+    max-width: 340px;        /* This stops it from getting too big on desktop */
+}
+.fb-plugin-container iframe {
+    width: 100% !important;
+}
+
+        .btn-facebook {
+            background-color: #1877F2; /* Facebook Blue */
+            color: #fff;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-facebook:hover {
+            background-color: #1465c7;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(24, 119, 242, 0.4);
+        }
+
+        /* Video */
+        .video-gallery-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:30px; margin-top:50px; }
+        .video-item { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.1); transition:transform 0.3s ease; }
+        .video-item:hover { transform:translateY(-5px); }
+        .video-item iframe, .video-item video { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+
+        /* Testimonials */
+        #testimonials { background-color: var(--secondary-color); color: var(--text-color-light); }
+        #testimonials .section-title { color: var(--text-color-light); }
+        .testimonial-carousel { overflow: hidden; position: relative; max-width: 900px; margin: 0 auto; }
+        .testimonial-track { display: flex; width: 100%; transition: transform 0.8s ease-in-out; }
+        .testimonial-slide { flex: 0 0 100%; box-sizing: border-box; text-align: center; padding: 40px; background-color: rgba(255,255,255,0.1); border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .testimonial-slide p { font-size: 1.3em; font-style: italic; margin-bottom: 20px; max-width:700px; }
+        .testimonial-author { font-weight: bold; font-size:1.1em; color: var(--primary-color); }
+        .carousel-controls { margin-top: 30px; text-align:center; }
+        .carousel-controls button { background-color:var(--primary-color); color:var(--bg-dark); border:none; padding:10px 15px; margin:0 10px; border-radius:5px; cursor:pointer; font-size:1.2em; transition:background-color 0.3s ease; }
+        .carousel-controls button:hover { background-color:#B5A07F; }
+
+        /* Contact */
+        #contact { background-color: var(--bg-light); }
+        .contact-content { display:flex; gap:50px; text-align:left; margin-top:50px; }
+        .contact-info, .contact-form-container { flex:1; }
+        .contact-info h3 { color: var(--secondary-color); margin-bottom:20px; }
+        .contact-info p { margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+        .contact-info i { color: var(--primary-color); font-size:1.2em; }
+        .social-links { margin-top:20px; }
+        .social-links a { color: var(--secondary-color); font-size:2em; margin-right:20px; transition:color 0.3s ease; }
+        .social-links a:hover { color: var(--primary-color); }
+        .contact-form-container { background-color:#f0f0f0; padding:30px; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.08); }
+        .contact-form-container h3 { text-align:center; margin-bottom:30px; }
+        .contact-form label { display:block; margin-bottom:8px; font-weight:500; }
+        .contact-form input, .contact-form textarea { width:100%; padding:12px; margin-bottom:20px; border:1px solid #ddd; border-radius:5px; font-size:1em; font-family:'Montserrat',sans-serif; transition:border-color 0.3s ease; }
+        .contact-form input:focus, .contact-form textarea:focus { border-color:var(--primary-color); outline:none; box-shadow:0 0 5px rgba(160,138,102,0.5); }
+        .contact-form button { width:100%; border:none; padding:15px; font-size:1.1em; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+
+        /* Footer */
+        footer { background-color:var(--bg-dark); color:var(--text-color-light); text-align:center; padding:40px 0; font-size:0.9em; }
+        footer .container { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; text-align:left; }
+        footer .footer-col { flex:1; min-width:250px; margin-bottom:30px; padding:0 20px; }
+        footer .footer-col h4 { color:var(--primary-color); margin-bottom:20px; position:relative; padding-bottom:8px; }
+        footer .footer-col h4::after { content:''; position:absolute; left:0; bottom:0; width:50px; height:2px; background-color:var(--primary-color); }
+        footer .footer-col ul { list-style:none; }
+        footer .footer-col ul li { margin-bottom:10px; }
+        footer .footer-col ul li a { color:var(--text-color-light); text-decoration:none; transition:color 0.3s ease; }
+        footer .footer-col ul li a:hover { color:var(--primary-color); }
+        footer .footer-col p { margin-bottom:10px; }
+        .footer-bottom { width:100%; text-align:center; margin-top:30px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px; }
+
+        /* WhatsApp */
+        .whatsapp-button { position:fixed; bottom:30px; right:30px; background-color:#25D366; color:white; width:60px; height:60px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:2.2em; box-shadow:0 4px 15px rgba(0,0,0,0.3); z-index:1001; transition:transform 0.3s ease, background-color 0.3s ease; text-decoration:none; }
+        .whatsapp-button:hover { background-color:#1DA851; transform:scale(1.1); }
+
+        .site-visit-button { display:inline-block; background-color:var(--secondary-color); color:var(--text-color-light); padding:15px 30px; text-decoration:none; border-radius:5px; font-weight:700; font-size:1.1em; transition:background-color 0.3s ease, transform 0.2s ease; box-shadow:0 4px 15px rgba(0,0,0,0.3); margin-top:30px; }
+        .site-visit-button:hover { background-color:#34495e; transform:translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.4); }
+
+        .modal { display:none; position:fixed; z-index:1002; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.6); padding-top:60px; }
+        .modal-content { background-color:var(--bg-light); margin:5% auto; padding:30px; border-radius:10px; width:90%; max-width:500px; box-shadow:0 5px 20px rgba(0,0,0,0.3); position:relative; }
+        .close-button { color:var(--text-color-dark); position:absolute; right:20px; top:10px; font-size:28px; font-weight:bold; cursor:pointer; }
+        .close-button:hover, .close-button:focus { color:var(--primary-color); text-decoration:none; cursor:pointer; }
+        .modal-content h3 { text-align:center; margin-bottom:20px; }
+
+        /* Modal Form */
+        #siteVisitModal .modal-content input[type="text"],
+        #siteVisitModal .modal-content input[type="email"],
+        #siteVisitModal .modal-content input[type="tel"],
+        #siteVisitModal .modal-content textarea {
+            width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd;
+            border-radius: 5px; font-size: 1em; font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        #siteVisitModal .modal-content input:focus, #siteVisitModal .modal-content textarea:focus {
+            border-color: var(--primary-color); outline: none; box-shadow: 0 0 5px rgba(160,138,102,0.5);
+        }
+        #siteVisitModal .modal-content button[type="submit"] {
+            width: 100%; border: none; padding: 15px; font-size: 1.1em; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); background-color: var(--primary-color);
+            color: var(--bg-dark); border-radius: 5px; font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        #siteVisitModal .modal-content button[type="submit"]:hover {
+            background-color: #B5A07F; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity:0; transform: translateY(-20px);} to { opacity:1; transform: translateY(0);} }
+        @keyframes fadeInRight { from { opacity:0; transform: translateX(20px);} to { opacity:1; transform: translateX(0);} }
+        @keyframes fadeInUp { from { opacity:0; transform: translateY(20px);} to { opacity:1; transform: translateY(0);} }
+        @keyframes zoomIn { from { opacity:0; transform: scale(0.9);} to { opacity:1; transform: scale(1);} }
+
+        /* Why Choose Us & Promo Vision & FAQ Styles */
+        .promo { background-color:#FFFFFF; color: #1A3E5D; padding: 0.6rem 1rem; border-radius: 8px; display: inline-block; font-weight: 700; margin: 1rem 0; font-size: 0.95em; text-align: center; }
+        .promo:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        #why-choose-us { background-color: var(--bg-light); padding: 80px 0; }
+        #why-choose-us .subtitle { font-size: 1.2em; color: #666; margin-top: -40px; margin-bottom: 60px; max-width: 800px; margin-left: auto; margin-right: auto; text-align: center; }
+        .choose-us-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 50px; }
+        .choose-us-item { background-color: var(--bg-light); padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease; text-align: center; position: relative; overflow: hidden; border: 1px solid #eee; }
+        .choose-us-item::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: var(--primary-color); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease-out; }
+        .choose-us-item:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+        .choose-us-item:hover::before { transform: scaleX(1); }
+        .choose-us-item i { font-size: 3.5em; color: var(--primary-color); margin-bottom: 25px; display: block; }
+        .choose-us-item:hover i { color: var(--secondary-color); transform: scale(1.05); }
+
+        #faq { background-color: #f8f8f8; padding: 80px 0; }
+        .faq-container { max-width: 900px; margin: 50px auto; text-align: left; }
+        .faq-item { background: var(--bg-light); border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+        .faq-question { width: 100%; background: var(--bg-light); color: var(--secondary-color); padding: 20px 30px; border: none; text-align: left; font-size: 1.2em; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; font-family: 'Montserrat', sans-serif; }
+        .faq-question::after { content: '\002B'; font-size: 1.5em; color: var(--primary-color); }
+        .faq-question.active { background: var(--primary-color); color: var(--bg-dark); border-bottom: 1px solid var(--primary-color); }
+        .faq-question.active::after { content: '\2212'; color: var(--bg-dark); }
+        .faq-answer { padding: 0 30px; background: var(--bg-light); max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .faq-answer p { padding: 20px 0; margin: 0; line-height: 1.7; }
+        .faq-contact-cta { font-size: 1.2em; color: var(--secondary-color); }
+        .faq-contact-cta a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+
+        #promo-vision { position: relative; height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-color-light); overflow: hidden; }
+        .promo-vision-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.7); z-index: 1; }
+        .promo-vision-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+        .promo-vision-content { position: relative; z-index: 3; max-width: 900px; padding: 20px; }
+        .promo-vision-content .promo-title { color: white; margin-bottom: 40px; font-size: 3.5em; }
+        .sliding-text-container { min-height: 120px; overflow: hidden; margin-bottom: 40px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .sliding-text { font-family: 'Playfair Display', serif; font-size: 2.2em; font-weight: 700; color: white; margin: 0; position: absolute; top: 0; left: 50%; transform: translateX(-50%) translateY(100%); opacity: 0; transition: transform 1s ease-out, opacity 0.8s ease-out; width: 90%; max-width: 800px; }
+        .sliding-text.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .promo-btn { background-color: var(--primary-color); color: var(--text-color-light); }
+        .promo-btn:hover { background-color: #B5A07F; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero h1 { font-size:3.5em; }
+            #about .container { flex-direction:column; gap:30px; }
+            .contact-content { flex-direction:column; }
+            footer .container { flex-direction:column; align-items:center; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size:2.5em; } h2 { font-size:2em; }
+            header .container { flex-wrap:wrap; }
+            nav { width:100%; order:3; display:none; flex-direction:column; background-color:var(--bg-dark); padding:10px 0; position:fixed; left:0; top:calc(var(--header-height)); z-index:999; }
+            nav.active { display:flex; }
+            nav ul { flex-direction:column; padding-top:15px; }
+            nav ul li { margin:10px 0; text-align:center; }
+            .hamburger { display:flex; }
+            .hero h1 { font-size:2.8em; }
+            .choose-us-grid, .services-grid, .gallery-grid, .video-gallery-grid { grid-template-columns:1fr; }
+            .whatsapp-button { width:50px; height:50px; font-size:1.8em; bottom:20px; right:20px; }
+            section:not(.hero) { padding:40px 0; }
+            .contact-info { text-align:center !important; }
+            .contact-info p { justify-content:center; }
+            .about-words-overlay { font-size: 1.8em; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size:2em; }
+            .hero h1 { font-size:2.2em; }
+            .sliding-text { font-size: 1.4em; }
+        }
+
+        /* Hide header on scroll */
+        header.hide-on-scroll { transform: translateY(-110%); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Trandy Construction</a>
+            <nav id="main-nav" aria-label="Main navigation">
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#gallery">Projects</a></li>
+                    <li><a href="#video-gallery">Video</a></li>
+                    <li><a href="#testimonials">Reviews</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="hamburger" id="hamburger-menu" aria-label="Open navigation" role="button" tabindex="0">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+<main>
+    <section class="hero" id="home">
+        <!-- Kept your original image filenames -->
+        <div class="hero-background active" style="background-image: url('bac1.png');"></div>
+        <div class="hero-background" style="background-image: url('bac2.png');"></div>
+        <div class="hero-background" style="background-image: url('bac3.png');"></div>
+        <div class="hero-background" style="background-image: url('bac4.png');"></div>
+        <div class="hero-background" style="background-image: url('bac5.png');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+		    <div class="promo">OVER 30 YEARS OF EXPERTISE</div>
+            <h1>Modern Builds for Modern Living</h1>
+            <p>Constructing the future of Gampaha with integrity, innovation, and structural excellence.</p>
+            <a href="#contact" class="btn">Get a Quote</a>
+            <a href="#" class="site-visit-button" id="openSiteVisitModal">Book a Site Visit</a>
+        </div>
+    </section>
+
+    <section id="about" class="container">
+        <div class="about-img">
+            <div class="about-image-slide active" style="background-image: url('luxury.jpg');">
+                <div class="about-words-overlay">
+                    <span class="about-word" data-delay="0">QUALITY</span>
+                    <span class="about-word" data-delay="200">INTEGRITY</span>
+                    <span class="about-word" data-delay="400">STRUCTURE</span>
+                    <span class="about-word" data-delay="600">SAFETY</span>
+                </div>
+            </div>
+            <div class="about-image-slide" style="background-image: url('luxury2.jpg');">
+                <div class="about-words-overlay">
+                    <span class="about-word" data-delay="0">ENGINEERING</span>
+                    <span class="about-word" data-delay="200">DESIGN</span>
+                    <span class="about-word" data-delay="400">BUILD</span>
+                    <span class="about-word" data-delay="600">MANAGE</span>
+                </div>
+            </div>
+            <div class="about-image-slide" style="background-image: url('luxury3.jpg');">
+                <div class="about-words-overlay">
+                    <span class="about-word" data-delay="0">MODERN</span>
+                    <span class="about-word" data-delay="200">DURABLE</span>
+                    <span class="about-word" data-delay="400">EFFICIENT</span>
+                    <span class="about-word" data-delay="600">TRUSTED</span>
+                </div>
+            </div>
+            <div class="about-image-slide" style="background-image: url('luxury4.jpg');">
+                <div class="about-words-overlay">
+                    <span class="about-word" data-delay="0">PLANNING</span>
+                    <span class="about-word" data-delay="200">EXECUTION</span>
+                    <span class="about-word" data-delay="400">FINISH</span>
+                    <span class="about-word" data-delay="600">HANDOVER</span>
+                </div>
+            </div>
+            <div class="about-image-slide" style="background-image: url('luxury5.jpg');">
+                <div class="about-words-overlay">
+                    <span class="about-word" data-delay="0">RESIDENTIAL</span>
+                    <span class="about-word" data-delay="200">COMMERCIAL</span>
+                    <span class="about-word" data-delay="400">INDUSTRIAL</span>
+                    <span class="about-word" data-delay="600">RENOVATION</span>
+                </div>
+            </div>
+        </div>
+        <div class="about-content">
+            <h2 class="section-title">About Trandy Construction</h2>
+            <p>At Trandy Construction, we believe that a building is more than just concrete and steel—it's the foundation for your future. With over 30 years of expertise in Gampaha and across Sri Lanka, we specialize in delivering high-quality residential and commercial construction projects that stand the test of time.</p>
+            <p>From laying the first foundation stone to the final coat of paint, our team of seasoned engineers, architects, and skilled builders are dedicated to transforming your blueprints into reality. We pride ourselves on strict adherence to safety standards, timeline management, and structural integrity. Whether it's a luxury home, a multi-story office complex, or a renovation project, we bring modern building techniques to every job site.</p>
+            <p>Discover the difference of working with a construction partner committed to transparency and excellence. We merge traditional durability with modern architectural trends to deliver spaces that are not just safe, but also aesthetically pleasing and functional. "Modern Builds for Modern Living" isn't just our slogan; it's our promise to you.</p>
+        </div>
+    </section>
+
+    <section id="services" class="container">
+        <h2 class="section-title">Our Construction Services</h2>
+        <div class="services-grid">
+            <div class="service-item">
+                <i class="fa-solid fa-home"></i>
+                <h3>Residential Construction</h3>
+                <p>We build dream homes from the ground up. Whether it's a single-story unit or a luxury villa, our team manages the entire lifecycle of the build, ensuring a solid foundation and a flawless finish tailored to your family's needs.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-building"></i>
+                <h3>Commercial Developments</h3>
+                <p>We deliver robust commercial infrastructures including office buildings, retail spaces, and warehouses. Our commercial projects focus on optimizing space, ensuring structural longevity, and meeting all regulatory standards.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-hammer"></i>
+                <h3>Renovation & Remodeling</h3>
+                <p>Transform your existing space with our renovation services. From structural modifications to complete aesthetic overhauls, we breathe new life into older buildings, enhancing their value and functionality.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-hard-hat"></i>
+                <h3>Project Management</h3>
+                <p>We take the stress out of building. Our comprehensive project management covers budgeting, scheduling, material procurement, and site supervision, ensuring your project is delivered on time and within budget.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-drafting-compass"></i>
+                <h3>Architectural Planning</h3>
+                <p>Our collaboration with top architects ensures that your vision is translated into practical blueprints. We provide structural drawings, 3D modeling, and council approval assistance to streamline the pre-construction phase.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-layer-group"></i>
+                <h3>Steel Structures & Roofing</h3>
+                <p>Specializing in durable steel fabrications and roofing solutions for both industrial and residential needs. We ensure weather-proofing, thermal insulation, and long-lasting structural stability.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-tools"></i>
+                <h3>Maintenance & Repairs</h3>
+                <p>Construction doesn't end at handover. We offer ongoing maintenance services, structural repairs, and waterproofing solutions to protect your investment for decades to come.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-paint-roller"></i>
+                <h3>Interior & Exterior Finishing</h3>
+                <p>From masonry and plastering to painting and tiling, our finishing teams ensure that the final look of your building reflects the high quality of the structure underneath.</p>
+            </div>
+            <div class="service-item">
+                <i class="fas fa-tree"></i>
+                <h3>Landscaping & Paving</h3>
+                <p>Complete your project with our exterior services. We design and construct driveways, retaining walls, and landscape features that complement your new building perfectly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotional Vision Section -->
+    <section id="promo-vision">
+        <div class="promo-vision-background" style="background-image: url('bac06.png');"></div>
+        <div class="promo-vision-overlay"></div>
+        <div class="promo-vision-content container">
+            <h2 class="promo-title section-title">Building Your Vision</h2>
+            <div class="sliding-text-container">
+                <p class="sliding-text active">Solid foundations for a secure future.</p>
+                <p class="sliding-text">Engineering excellence in every brick.</p>
+                <p class="sliding-text">Modern designs, timeless durability.</p>
+                <p class="sliding-text">Trandy Construction: Your trusted partner.</p>
+            </div>
+            <a href="#contact" class="btn promo-btn">Start Your Build</a>
+        </div>
+    </section>
+
+    <section id="why-choose-us" class="container">
+        <h2 class="section-title">Why Choose Trandy Construction?</h2>
+        <p class="subtitle">Experience the reliability of a partner dedicated to safety, quality, and modern construction standards.</p>
+        <div class="choose-us-grid">
+            <div class="choose-us-item">
+                <i class="fas fa-certificate"></i>
+                <h3>30+ Years Experience</h3>
+                <p>With three decades of construction history in Sri Lanka, we bring unparalleled knowledge of local terrains, materials, and regulations to every project we undertake.</p>
+            </div>
+            <div class="choose-us-item">
+                <i class="fas fa-ruler-combined"></i>
+                <h3>Precision Engineering</h3>
+                <p>We don't cut corners. Our commitment to structural precision ensures that your building is safe, compliant with all engineering standards, and built to last generations.</p>
+            </div>
+            <div class="choose-us-item">
+                <i class="fas fa-hand-holding-usd"></i>
+                <h3>Transparent Pricing</h3>
+                <p>No hidden costs. We provide detailed BOQs (Bill of Quantities) and transparent contracts, so you know exactly where your investment goes at every stage of construction.</p>
+            </div>
+            <div class="choose-us-item">
+                <i class="fas fa-user-shield"></i>
+                <h3>Safety First</h3>
+                <p>We adhere to strict safety protocols on all our sites. Protecting our workers and your property is our top priority, ensuring a smooth and accident-free construction process.</p>
+            </div>
+            <div class="choose-us-item">
+                <i class="fas fa-users"></i>
+                <h3>Skilled Workforce</h3>
+                <p>Our team consists of qualified engineers, supervisors, and skilled masons. We employ the best hands in the industry to ensure superior craftsmanship in every detail.</p>
+            </div>
+            <div class="choose-us-item">
+                <i class="fas fa-clock"></i>
+                <h3>On-Time Delivery</h3>
+                <p>We respect your time. Through efficient project management and resource allocation, we strive to hand over your keys on the promised date without compromising quality.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="container">
+        <h2 class="section-title">Our Project Portfolio</h2>
+        <div class="gallery-nav">
+            <button class="filter-button active" data-filter="all">All Projects</button>
+            <button class="filter-button" data-filter="pantry">Residential</button>
+            <button class="filter-button" data-filter="living">Commercial</button>
+            <button class="filter-button" data-filter="tv-room">Renovations</button>
+            <button class="filter-button" data-filter="bedroom">Interiors</button>
+            <button class="filter-button" data-filter="bathroom">Finishing</button>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item" data-category="pantry">
+                <img src="gallery-pantry1.jpg" alt="Construction Project 1">
+                <div class="gallery-item-overlay">
+                    <h4>Modern Kitchen Construction</h4>
+                    <p>Complete structural build and finishing for a modern luxury kitchen in Gampaha.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="pantry">
+                <img src="gallery-pantry2.jpg" alt="Construction Project 2">
+                <div class="gallery-item-overlay">
+                    <h4>Custom Cabinetry Installation</h4>
+                    <p>High-quality carpentry and woodwork installation for a newly built residence.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="living">
+                <img src="gallery-living1.jpg" alt="Construction Project 3">
+                <div class="gallery-item-overlay">
+                    <h4>Hotel Lobby Construction</h4>
+                    <p>Structural framework and interior finishing for a commercial hotel project.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="living">
+                <img src="gallery-living2.jpg" alt="Construction Project 4">
+                <div class="gallery-item-overlay">
+                    <h4>Luxury Villa Living Area</h4>
+                    <p>Open-plan architectural construction emphasizing natural light and structural elegance.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="living">
+                <img src="gallery-living3.jpg" alt="Construction Project 5">
+                <div class="gallery-item-overlay">
+                    <h4>Apartment Complex Interior</h4>
+                    <p>Modern flooring and wall finishing for a high-rise apartment complex.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="tv-room">
+                <img src="gallery-tvroom1.jpg" alt="Construction Project 6">
+                <div class="gallery-item-overlay">
+                    <h4>Home Theater Soundproofing</h4>
+                    <p>Specialized construction for acoustic insulation and media room layout.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="tv-room">
+                <img src="gallery-tvroom2.jpg" alt="Construction Project 7">
+                <div class="gallery-item-overlay">
+                    <h4>Structural Renovations</h4>
+                    <p>Wall modifications and electrical integration for a modern entertainment space.</p>
+                </div>
+            </div>
+             <div class="gallery-item" data-category="pantry">
+                <img src="gallery-pantry3.jpg" alt="Construction Project 8">
+                <div class="gallery-item-overlay">
+                    <h4>Residential Fit-out</h4>
+                    <p>Complete interior fit-out including plumbing, electrical, and tiling works.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="living">
+                <img src="gallery-living4.jpg" alt="Construction Project 9">
+                <div class="gallery-item-overlay">
+                    <h4>Loft Conversion</h4>
+                    <p>Industrial style conversion of an old warehouse into a modern living space.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="bedroom">
+                <img src="gallery-bedroom1.jpg" alt="Construction Project 10">
+                <div class="gallery-item-overlay">
+                    <h4>Master Suite Extension</h4>
+                    <p>Building extension adding a luxury master suite to an existing property.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="bedroom">
+                <img src="gallery-bedroom2.jpg" alt="Construction Project 11">
+                <div class="gallery-item-overlay">
+                    <h4>Modern Home Design</h4>
+                    <p>Minimalist architectural build with custom storage solutions.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="bathroom">
+                <img src="gallery-bathroom1.jpg" alt="Construction Project 12">
+                <div class="gallery-item-overlay">
+                    <h4>Bathroom Plumbing & Tiling</h4>
+                    <p>High-end waterproofing, plumbing installation, and marble tiling.</p>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="bathroom">
+                <img src="gallery-bathroom2.jpg" alt="Construction Project 13">
+                <div class="gallery-item-overlay">
+                    <h4>Ensuite Remodel</h4>
+                    <p>Complete demolition and rebuild of a modern ensuite bathroom.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION ADDED HERE AS REQUESTED -->
+    <section id="facebook-feed" class="container">
+        <h2 class="section-title">From Our Facebook Page</h2>
+        <div class="fb-wrapper">
+            <!-- 
+               IMPORTANT: 
+               If this area is blank, it is likely blocked by an AdBlocker or Tracking Protection. 
+               This code uses the safest URL format for Facebook plugins.
+            -->
+            <div class="fb-plugin-container" style="max-width:340px; margin:0 auto 20px auto;">
+             <iframe
+    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F61563674311344&tabs=timeline&width=280&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+    width="100%"
+    height="500"
+    style="border:none;overflow:hidden;display:block;"
+    scrolling="no"
+    frameborder="0"
+    allowfullscreen="true"
+    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+</iframe>
+            </div>
+            <a href="https://www.facebook.com/61563674311344" target="_blank" class="btn-facebook">
+                <i class="fab fa-facebook-square"></i> Like us on Facebook
+            </a>
+        </div>
+    </section>
+    <!-- END NEW SECTION -->
+	
+	
+
+<!-- ===== TikTok Slider Section (Custom Video Files) ===== -->
+<section id="tiktok-slider-section" class="container" style="padding-top:40px; padding-bottom:60px;">
+  <h2 class="section-title">From Our TikTok Page</h2>
+
+  <!-- CSS Styles for this specific section -->
+  <style>
+    /* Slider Container */
+    #tiktok-slider { position: relative; max-width: 350px; margin: 0 auto; } /* 350px width mimics mobile screen/tiktok ratio */
+    
+    #tiktok-slider .slider-viewport { overflow: hidden; width: 100%; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    
+    #tiktok-slider .slider-track { display: flex; transition: transform 0.5s ease; align-items: flex-start; }
+    
+    #tiktok-slider .slide { min-width: 100%; flex: 0 0 100%; box-sizing: border-box; }
+    
+    /* Card Style (The "TikTok Feel") */
+    .tiktok-card {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Video Style */
+    .tiktok-card video {
+        width: 100%;
+        height: 550px; /* Fixed height for vertical video look */
+        object-fit: cover; /* Ensures video fills the space */
+        background: #000;
+        display: block;
+    }
+
+    /* Caption Area */
+    .tiktok-caption-area {
+        padding: 15px;
+        text-align: left;
+        background: #fff;
+    }
+
+    .tiktok-user {
+        font-weight: 700;
+        color: #000;
+        text-decoration: none;
+        font-size: 1em;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .tiktok-user:hover { text-decoration: underline; }
+
+    .tiktok-text {
+        font-size: 0.95em;
+        color: #333;
+        line-height: 1.4;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* TikTok system font */
+    }
+
+    /* Navigation Arrows */
+    .slider-arrow {
+        position: absolute; top: 45%; transform: translateY(-50%);
+        background: white; color: var(--secondary-color); border: none;
+        width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 10;
+        font-size: 1.2em; display:flex; align-items:center; justify-content:center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: transform 0.2s, background 0.2s;
+    }
+    .slider-arrow:hover { background: var(--primary-color); color: white; transform: translateY(-50%) scale(1.1); }
+    .slider-arrow.prev { left: -60px; }
+    .slider-arrow.next { right: -60px; }
+
+    /* Mobile adjustments */
+    @media (max-width: 500px) {
+        .slider-arrow.prev { left: -15px; }
+        .slider-arrow.next { right: -15px; }
+    }
+  </style>
+
+  <div id="tiktok-slider">
+    <!-- Prev Arrow -->
+    <button class="slider-arrow prev" aria-label="Previous video"><i class="fas fa-chevron-left"></i></button>
+
+    <div class="slider-viewport">
+      <div class="slider-track">
+        
+        <!-- Slide 1 -->
+        <div class="slide">
+            <div class="tiktok-card">
+                <video controls playsinline loop poster="">
+                    <source src="t1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="tiktok-caption-area">
+                    <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="tiktok-user">@trandy.lk</a>
+                    <p class="tiktok-text">Exterior Cladding Transformation ✨ Strong • Stylish • Modern – Built to Last 🏗️</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <div class="tiktok-card">
+                <video controls playsinline loop>
+                    <source src="t2.mp4" type="video/mp4">
+                </video>
+                <div class="tiktok-caption-area">
+                    <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="tiktok-user">@trandy.lk</a>
+                    <p class="tiktok-text">✨ Ongoing Exterior Cladding Project in Progress ✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <div class="tiktok-card">
+                <video controls playsinline loop>
+                    <source src="t3.mp4" type="video/mp4">
+                </video>
+                <div class="tiktok-caption-area">
+                    <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="tiktok-user">@trandy.lk</a>
+                    <p class="tiktok-text">✨ Another strong and stylish finish! ✨ Steel Handrail perfectly crafted...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <div class="tiktok-card">
+                <video controls playsinline loop>
+                    <source src="t4.mp4" type="video/mp4">
+                </video>
+                <div class="tiktok-caption-area">
+                    <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="tiktok-user">@trandy.lk</a>
+                    <p class="tiktok-text">✅ Job Done – Tempered Glass Installation Strong | Stylish | Durable 💎</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide">
+            <div class="tiktok-card">
+                <video controls playsinline loop>
+                    <source src="t5.mp4" type="video/mp4">
+                </video>
+                <div class="tiktok-caption-area">
+                    <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="tiktok-user">@trandy.lk</a>
+                    <p class="tiktok-text">✨ Job Done ✨ Modern CNC Cladding Design 🏢🔥</p>
+                </div>
+            </div>
+        </div>
+
+      </div> <!-- End Track -->
+    </div> <!-- End Viewport -->
+
+    <!-- Next Arrow -->
+    <button class="slider-arrow next" aria-label="Next video"><i class="fas fa-chevron-right"></i></button>
+    
+    <!-- See More Button -->
+    <div style="text-align:center; margin-top:30px;">
+        <a href="https://www.tiktok.com/@trandy.lk" target="_blank" class="site-visit-button" style="display:inline-flex; align-items:center; gap:10px;">
+            <i class="fab fa-tiktok"></i> See More on TikTok
+        </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- Slider Logic Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const track = document.querySelector('#tiktok-slider .slider-track');
+    const slides = document.querySelectorAll('#tiktok-slider .slide');
+    const prevBtn = document.querySelector('#tiktok-slider .slider-arrow.prev');
+    const nextBtn = document.querySelector('#tiktok-slider .slider-arrow.next');
+    const videos = document.querySelectorAll('#tiktok-slider video');
+    let currentIndex = 0;
+
+    function updateSlider() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        
+        // Pause all videos when sliding
+        videos.forEach(video => video.pause());
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateSlider();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    });
+});
+</script>
+
+
+
+    <section id="video-gallery" class="container">
+        <h2 class="section-title">Our Vision in Motion</h2>
+        <p>Explore our video gallery to see our construction sites in action. Witness the heavy machinery, skilled labor, and project progression that define Trandy Construction's commitment to quality building.</p>
+        <div class="video-gallery-grid">
+            <div class="video-item"><video src="1.mp4" controls preload="metadata" playsinline aria-label="Video 1 — click to play"></video></div>
+            <div class="video-item"><video src="2.mp4" controls preload="metadata" playsinline aria-label="Video 2 — click to play"></video></div>
+            <div class="video-item"><video src="3.mp4" controls preload="metadata" playsinline aria-label="Video 3 — click to play"></video></div>
+        </div>
+    </section>
+
+    <section id="testimonials">
+        <h2 class="section-title">Client Success Stories</h2>
+
+        <div class="testimonial-carousel">
+            <div class="testimonial-track" id="testimonial-track">
+                <div class="testimonial-slide">
+                    <p>"Trandy Construction built our dream home in Gampaha from scratch. Their team was professional, transparent with costs, and finished the project two weeks ahead of schedule. The structural quality is evident in every corner."</p>
+                    <span class="testimonial-author">- Mr. S. Perera, Homeowner</span>
+                </div>
+
+                <div class="testimonial-slide">
+                    <p>"We hired Trandy Construction for our new office complex. Their project management skills are top-notch. They handled everything from council approvals to the final electrical wiring flawlessly. Highly recommended for commercial builds."</p>
+                    <span class="testimonial-author">- Ms. K. Jayasuriya, Director, TechSolutions</span>
+                </div>
+
+                <div class="testimonial-slide">
+                    <p>"I wanted to renovate my ancestral home without losing its charm. Trandy Construction understood the assignment perfectly. They reinforced the structure while modernizing the interiors. A fantastic job!"</p>
+                    <span class="testimonial-author">- Dr. Fernando, Gampaha</span>
+                </div>
+
+                <div class="testimonial-slide">
+                    <p>"Safety and durability were my main concerns. Trandy Construction demonstrated excellent engineering knowledge and used high-grade materials throughout the build. I sleep soundly knowing my house is built to last."</p>
+                    <span class="testimonial-author">- Mr. & Mrs. Rajapakse, Residential Client</span>
+                </div>
+
+                 <div class="testimonial-slide">
+                    <p>"Their finishing work is exceptional. From the tiling to the roofing, everything was done with precision. It's rare to find a construction company in Sri Lanka that pays this much attention to detail."</p>
+                    <span class="testimonial-author">- Mr. A. Mendis, Business Owner</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-controls">
+            <button id="prev-testimonial">Prev</button>
+            <button id="next-testimonial">Next</button>
+        </div>
+    </section>
+
+    <section id="faq" class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <button class="faq-question">What areas do you operate in besides Gampaha?</button>
+                <div class="faq-answer">
+                    <p>While we are based in Gampaha, Trandy Construction operates throughout the Western Province and surrounding areas. For large-scale commercial projects, we are available to work island-wide across Sri Lanka. Please contact us to discuss your specific location.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">Do you handle council approvals and permits?</button>
+                <div class="faq-answer">
+                    <p>Yes, we provide end-to-end support. Our team assists with preparing architectural drawings, structural certificates, and submitting necessary documents to local councils (Pradeshiya Sabha/Urban Council) to obtain building permits and approvals smoothly.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">Can you build on a "Labor Only" basis?</button>
+                <div class="faq-answer">
+                    <p>We offer flexible contract models. We can work on a "Labor Only" basis where you supply materials, or a "Turnkey" basis where we handle both materials and labor. We generally recommend Turnkey solutions as it allows us to control quality and timeline better, but we are happy to discuss your preference.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">How do you ensure the quality of materials used?</button>
+                <div class="faq-answer">
+                    <p>We source materials only from reputable suppliers and manufacturers in Sri Lanka. Whether it's cement, steel, or finishing items, we verify the quality against industry standards. We are also transparent with our clients and can provide material samples for approval before installation.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">How long does it take to build a standard two-story house?</button>
+                <div class="faq-answer">
+                    <p>The timeline depends on the size, design complexity, and weather conditions. Typically, a standard two-story residential project takes between 6 to 10 months to complete from foundation to handover. We provide a detailed schedule before starting any project.</p>
+                </div>
+            </div>
+        </div>
+        <p class="faq-contact-cta">Have more questions? Call us at <strong>+94 71 484 1246</strong> or <a href="#contact">send a message</a> for a free consultation.</p>
+    </section>
+
+    <section id="contact" class="container">
+        <h2 class="section-title">Contact Trandy Construction</h2>
+        <div class="contact-content">
+            <div class="contact-info">
+                <h3>Get in Touch</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Gampaha, Sri Lanka.</p>
+                <p><i class="fas fa-phone-alt"></i> +94 71 484 1246</p>
+                <p><i class="fas fa-envelope"></i> infotrandy@gmail.com</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/61563674311344" target="_blank" aria-label="Follow us on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <!-- Updated/Placeholder links for other socials -->
+                    <a href="#" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Connect with us on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="contact-form-container">
+                <h3>Request a Quote</h3>
+                <form class="contact-form" action="#" method="POST">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Your Phone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Project Details</label>
+                        <textarea id="message" name="message" rows="6" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Request</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-col">
+            <h4>Trandy Construction</h4>
+            <p>Your trusted partner for modern builds in Sri Lanka. With over 30 years of experience, we deliver structural excellence and innovative designs for homes and businesses.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#gallery">Projects</a></li>
+                <li><a href="#testimonials">Reviews</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#" id="footer-site-visit">Book a Site Visit</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Contact Info</h4>
+            <p><i class="fas fa-map-marker-alt"></i> Gampaha, Sri Lanka.</p>
+            <p><i class="fas fa-phone-alt"></i> +94 71 484 1246</p>
+            <p><i class="fas fa-envelope"></i> infotrandy@gmail.com</p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/61563674311344" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2025 Trandy Construction. All Rights Reserved.
+    </div>
+</footer>
+
+<a href="https://wa.me/94714841246" class="whatsapp-button" target="_blank" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Site Visit Booking Modal -->
+<div id="siteVisitModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+        <span class="close-button" role="button" aria-label="Close modal">&times;</span>
+        <h3>Book a Site Visit</h3>
+        <p>Fill out the details below. Our engineering team will contact you to schedule a site inspection in the Gampaha area or beyond.</p>
+        <form id="siteVisitForm" action="#" method="POST">
+            <div class="form-group">
+                <label for="sv-name">Your Full Name</label>
+                <input type="text" id="sv-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="sv-email">Your Email</label>
+                <input type="email" id="sv-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="sv-phone">Your Phone Number</label>
+                <input type="tel" id="sv-phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="sv-address">Construction Site Address</label>
+                <textarea id="sv-address" name="address" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="sv-details">Project Type / Preferred Date</label>
+                <textarea id="sv-details" name="details" rows="4"></textarea>
+            </div>
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Smooth scrolling
+    document.querySelectorAll('nav ul li a').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (!target) return;
+            const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || document.querySelector('header').getBoundingClientRect().height || 72;
+            const top = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 8;
+            window.scrollTo({ top, behavior: 'smooth' });
+
+            if (document.getElementById('main-nav').classList.contains('active')) {
+                document.getElementById('main-nav').classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+            }
+        });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+    });
+
+    // Hero slideshow
+    const heroBackgrounds = document.querySelectorAll('.hero-background');
+    let currentHeroIndex = 0;
+    function changeHeroBackground() {
+        heroBackgrounds[currentHeroIndex].classList.remove('active');
+        currentHeroIndex = (currentHeroIndex + 1) % heroBackgrounds.length;
+        heroBackgrounds[currentHeroIndex].classList.add('active');
+    }
+    setInterval(changeHeroBackground, 5000);
+
+    // Mobile nav
+    const hamburger = document.getElementById('hamburger-menu');
+    const nav = document.getElementById('main-nav');
+    hamburger.addEventListener('click', () => {
+        nav.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        setTimeout(updateHeaderHeightVar, 200);
+    });
+
+    // Gallery filtering
+    const filterButtons = document.querySelectorAll('.filter-button');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            const filter = button.dataset.filter;
+            galleryItems.forEach(item => {
+                if (filter === 'all' || item.dataset.category === filter) {
+                    item.style.display = 'block';
+                    setTimeout(() => item.style.opacity = '1', 50);
+                } else {
+                    item.style.opacity = '0';
+                    setTimeout(() => item.style.display = 'none', 300);
+                }
+            });
+        });
+    });
+
+    // Testimonials
+    const testimonialTrack = document.getElementById('testimonial-track');
+    const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+    const prevBtn = document.getElementById('prev-testimonial');
+    const nextBtn = document.getElementById('next-testimonial');
+    let currentTestimonialIndex = 0;
+
+    function updateTestimonialPosition() {
+        const offset = -currentTestimonialIndex * 100;
+        testimonialTrack.style.transform = `translateX(${offset}%)`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentTestimonialIndex = (currentTestimonialIndex - 1 + testimonialSlides.length) % testimonialSlides.length;
+        updateTestimonialPosition();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonialSlides.length;
+        updateTestimonialPosition();
+    });
+
+    let testimonialInterval = setInterval(() => {
+        currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonialSlides.length;
+        updateTestimonialPosition();
+    }, 7000);
+
+    const testimonialCarouselEl = document.querySelector('.testimonial-carousel');
+    testimonialCarouselEl.addEventListener('mouseenter', () => clearInterval(testimonialInterval));
+    testimonialCarouselEl.addEventListener('mouseleave', () => {
+        testimonialInterval = setInterval(() => {
+            currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonialSlides.length;
+            updateTestimonialPosition();
+        }, 7000);
+    });
+
+    // Modal Logic
+    const siteVisitModal = document.getElementById('siteVisitModal');
+    const openSiteVisitModalBtn = document.getElementById('openSiteVisitModal');
+    const closeSiteVisitModalBtn = document.querySelector('#siteVisitModal .close-button');
+    const siteVisitForm = document.getElementById('siteVisitForm');
+    const footerSiteVisitBtn = document.getElementById('footer-site-visit');
+
+    openSiteVisitModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        siteVisitModal.style.display = 'block';
+        siteVisitModal.setAttribute('aria-hidden', 'false');
+    });
+
+    if (footerSiteVisitBtn) {
+        footerSiteVisitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            siteVisitModal.style.display = 'block';
+            siteVisitModal.setAttribute('aria-hidden', 'false');
+        });
+    }
+
+    closeSiteVisitModalBtn.addEventListener('click', () => {
+        siteVisitModal.style.display = 'none';
+        siteVisitModal.setAttribute('aria-hidden', 'true');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == siteVisitModal) {
+            siteVisitModal.style.display = 'none';
+            siteVisitModal.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    siteVisitForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(siteVisitForm);
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
+        console.log('Site Visit Request Submitted:', data);
+        alert('Your site visit request has been submitted to Trandy Construction! We will contact you shortly.');
+        siteVisitModal.style.display = 'none';
+        siteVisitModal.setAttribute('aria-hidden', 'true');
+        siteVisitForm.reset();
+    });
+
+    document.querySelector('.contact-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Your message has been sent to Trandy Construction! We will get back to you soon.');
+        e.target.reset();
+    });
+
+    // Header & Section Observer
+    (function() {
+        const header = document.querySelector('header');
+        const navEl = document.getElementById('main-nav');
+        let sectionObserver = null;
+
+        function updateHeaderHeightVar() {
+            const h = header.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--header-height', h + 'px');
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.paddingTop = `${h}px`;
+                hero.style.minHeight = `calc(100vh - ${h}px)`;
+            }
+            if (navEl) navEl.style.top = `${h}px`;
+            createObserver(h);
+        }
+
+        function createObserver(headerHeight) {
+            if (sectionObserver) sectionObserver.disconnect();
+            const topMargin = -Math.max(0, headerHeight - 8);
+            sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { root: null, rootMargin: `${topMargin}px 0px -10% 0px`, threshold: 0.05 });
+            document.querySelectorAll('section:not(.hero)').forEach(s => sectionObserver.observe(s));
+        }
+
+        window.addEventListener('load', () => { updateHeaderHeightVar(); document.querySelector('.hero') && document.querySelector('.hero').classList.add('visible'); });
+        window.addEventListener('resize', updateHeaderHeightVar);
+
+        let lastY = window.scrollY || 0;
+        let ticking = false;
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentY = window.scrollY;
+                    const threshold = 10;
+                    if (currentY > lastY + threshold && currentY > 100) header.classList.add('hide-on-scroll');
+                    else if (currentY < lastY - threshold) header.classList.remove('hide-on-scroll');
+                    lastY = currentY;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+            if (navEl && navEl.classList.contains('active')) {
+                navEl.classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+            }
+        });
+        setTimeout(updateHeaderHeightVar, 500);
+    })();
+
+    document.querySelector('.hero') && document.querySelector('.hero').classList.add('visible');
+    updateTestimonialPosition();
+
+    // About Slideshow
+    const aboutImageSlides = document.querySelectorAll('.about-image-slide');
+    let currentAboutImageIndex = 0;
+    let aboutSlideshowInterval;
+
+    function activateAboutWords(slideElement) {
+        const words = slideElement.querySelectorAll('.about-word');
+        words.forEach(word => word.classList.remove('visible')); 
+        words.forEach((word) => { setTimeout(() => { word.classList.add('visible'); }, parseInt(word.dataset.delay)); });
+    }
+
+    function changeAboutImageSlide() {
+        if (aboutImageSlides.length === 0) return;
+        aboutImageSlides[currentAboutImageIndex].classList.remove('active');
+        const currentWords = aboutImageSlides[currentAboutImageIndex].querySelectorAll('.about-word');
+        currentWords.forEach(word => word.classList.remove('visible'));
+        currentAboutImageIndex = (currentAboutImageIndex + 1) % aboutImageSlides.length;
+        aboutImageSlides[currentAboutImageIndex].classList.add('active');
+        activateAboutWords(aboutImageSlides[currentAboutImageIndex]);
+    }
+
+    const aboutSection = document.getElementById('about');
+    const aboutSectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (aboutImageSlides.length > 0) {
+                    aboutImageSlides[currentAboutImageIndex].classList.add('active');
+                    activateAboutWords(aboutImageSlides[currentAboutImageIndex]);
+                    aboutSlideshowInterval = setInterval(changeAboutImageSlide, 6000);
+                }
+            } else {
+                clearInterval(aboutSlideshowInterval);
+                aboutImageSlides.forEach(slide => slide.classList.remove('active'));
+                document.querySelectorAll('.about-word').forEach(word => word.classList.remove('visible'));
+                currentAboutImageIndex = 0;
+            }
+        });
+    }, { root: null, rootMargin: '0px', threshold: 0.2 });
+    if (aboutSection) aboutSectionObserver.observe(aboutSection);
+
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const faqItem = button.closest('.faq-item');
+            const answer = faqItem.querySelector('.faq-answer');
+            button.classList.toggle('active');
+            if (button.classList.contains('active')) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                answer.style.paddingTop = '0'; answer.style.paddingBottom = '0';
+                answer.querySelector('p').style.paddingTop = '20px'; answer.querySelector('p').style.paddingBottom = '20px';
+            } else {
+                answer.style.maxHeight = null; answer.style.paddingTop = '0'; answer.style.paddingBottom = '0';
+                answer.querySelector('p').style.paddingTop = '0'; answer.querySelector('p').style.paddingBottom = '0';
+            }
+            document.querySelectorAll('.faq-question').forEach(otherButton => {
+                if (otherButton !== button && otherButton.classList.contains('active')) {
+                    otherButton.classList.remove('active');
+                    const otherAnswer = otherButton.closest('.faq-item').querySelector('.faq-answer');
+                    otherAnswer.style.maxHeight = null;
+                }
+            });
+        });
+    });
+
+    // Sliding text
+    const slidingTexts = document.querySelectorAll('#promo-vision .sliding-text');
+    let currentSlidingTextIndex = 0;
+    function cycleSlidingText() {
+        if (slidingTexts.length === 0) return;
+        slidingTexts[currentSlidingTextIndex].classList.remove('active');
+        currentSlidingTextIndex = (currentSlidingTextIndex + 1) % slidingTexts.length;
+        slidingTexts[currentSlidingTextIndex].classList.add('active');
+    }
+    if (slidingTexts.length > 0) {
+        slidingTexts[0].classList.add('active');
+        setInterval(cycleSlidingText, 5000);
+    }
+</script>
+</body>
+</html>
