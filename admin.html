@@ -4,187 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trandy Admin Panel</title>
-    <!-- 2) Favicon Added -->
-    <link rel="icon" href="logo.png" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Login Overlay */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1A3E5D; display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 300px; }
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
-        .btn { background: #E9762F; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn:hover { background: #d35400; }
-
-        /* Dashboard */
-        #dashboard { display: none; }
-        h2 { border-bottom: 2px solid #E9762F; padding-bottom: 10px; color: #1A3E5D; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        .color-picker { height: 40px; padding: 2px; }
-        
-        .section-header { background: #eee; padding: 10px; margin-top: 20px; font-weight: bold; }
-        .preview-link { display: block; text-align: center; margin-bottom: 20px; color: #1A3E5D; text-decoration: none; }
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #D4AF37; padding-bottom: 10px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; border: 1px solid #eee; padding: 15px; border-radius: 5px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-save { background: #28a745; color: white; width: 100%; font-size: 1.2rem; margin-top: 20px; }
+        .btn-login { background: #007bff; color: white; }
+        .btn-upload { background: #D4AF37; color: white; font-size: 0.9rem; margin-top: 5px; }
+        #admin-panel { display: none; }
+        #login-panel { text-align: center; max-width: 400px; margin: 100px auto; }
+        .preview-img { width: 100px; height: 60px; object-fit: cover; margin-top: 5px; border: 1px solid #ccc; display: block;}
+        .section-header { background: #eee; padding: 10px; font-weight: bold; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <img src="logo.png" alt="Logo" style="height: 50px; margin-bottom: 10px;">
-            <h3>Admin Login</h3>
-            <input type="password" id="adminPass" placeholder="Enter Password">
-            <button class="btn" onclick="checkLogin()">Login</button>
-            <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Wrong Password</p>
+    <!-- Login Section -->
+    <div id="login-panel" class="container">
+        <h2>Admin Login</h2>
+        <input type="email" id="email" placeholder="Email" style="margin-bottom:10px;"><br>
+        <input type="password" id="password" placeholder="Password" style="margin-bottom:10px;"><br>
+        <button class="btn-login" onclick="login()">Login</button>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-panel" class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Website Manager</h2>
+            <button onclick="logout()" style="background:#dc3545; color:white;">Logout</button>
         </div>
+
+        <!-- Style Selector -->
+        <div class="form-group">
+            <label>Select Website Style:</label>
+            <select id="styleSelector">
+                <option value="style1">Style 01 (Luxury Gold/Dark)</option>
+                <option value="style2">Style 02 (Orange/Blue Construction)</option>
+                <option value="style3">Style 03 (Classic Modern)</option>
+                <option value="style4">Style 04 (Dark Blue Professional)</option>
+            </select>
+        </div>
+
+        <div id="content-manager">
+            <!-- Dynamic Inputs will be generated here by JS -->
+        </div>
+
+        <button class="btn-save" onclick="saveData()">SAVE CHANGES</button>
     </div>
 
-    <div id="dashboard" class="container">
-        <a href="index.html" class="preview-link">← Back to Website</a>
-        <h2>Website Settings</h2>
-        
-        <form id="settingsForm">
-            <!-- 7) Templates -->
-            <div class="section-header">Appearance</div>
-            <div class="form-group">
-                <label>Select Template</label>
-                <select id="themeSelect">
-                    <option value="theme-classic">Classic (Orange/Blue)</option>
-                    <option value="theme-dark">Modern Dark (Gold/Black)</option>
-                    <option value="theme-nature">Eco Nature (Green/White)</option>
-                    <option value="theme-industrial">Industrial (Yellow/Grey)</option>
-                    <option value="theme-ocean">Ocean Glass (Blue/Glass)</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Primary Color Override</label>
-                <input type="color" id="pColor" class="color-picker" value="#E9762F">
-            </div>
-            <div class="form-group">
-                <label>Secondary Color Override</label>
-                <input type="color" id="sColor" class="color-picker" value="#1A3E5D">
-            </div>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
-            <!-- 6) Edit Texts -->
-            <div class="section-header">Text Content</div>
-            <div class="form-group">
-                <label>Hero Title</label>
-                <input type="text" id="heroTitle">
-            </div>
-            <div class="form-group">
-                <label>Hero Description</label>
-                <textarea id="heroDesc" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>About Title</label>
-                <input type="text" id="aboutTitle">
-            </div>
-            <div class="form-group">
-                <label>Contact Phone</label>
-                <input type="text" id="contactPhone">
-            </div>
-
-            <!-- 6) Upload Photos -->
-            <div class="section-header">Photos</div>
-            <div class="form-group">
-                <label>Main Hero Background</label>
-                <input type="file" id="heroBgInput">
-                <small>Leave empty to keep current</small>
-            </div>
-
-            <button type="submit" class="btn" id="saveBtn">Save Changes</button>
-        </form>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-
+    <script>
         const firebaseConfig = {
-          apiKey: "AIzaSyBUjzMFao9BS3uXBOW3qYrLVqHaGn8qIk4",
-          authDomain: "onlineshop-30cd1.firebaseapp.com",
-          projectId: "onlineshop-30cd1",
-          storageBucket: "onlineshop-30cd1.firebasestorage.app",
-          messagingSenderId: "818252574868",
-          appId: "1:818252574868:web:8dd36825db589a886cc481",
-          measurementId: "G-6YLGGH2NDD"
+            apiKey: "AIzaSyBUjzMFao9BS3uXBOW3qYrLVqHaGn8qIk4",
+            authDomain: "onlineshop-30cd1.firebaseapp.com",
+            projectId: "onlineshop-30cd1",
+            storageBucket: "onlineshop-30cd1.firebasestorage.app",
+            messagingSenderId: "818252574868",
+            appId: "1:818252574868:web:8dd36825db589a886cc481",
+            measurementId: "G-6YLGGH2NDD"
         };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        const storage = firebase.storage();
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
+        // --- Sections Configuration ---
+        const sections = [
+            { id: 'hero', title: '1. Hero Section (Slideshow)', count: 5, type: 'image' },
+            { id: 'about', title: '2. About Section (Vertical)', count: 5, type: 'image' },
+            { id: 'parallax', title: '3. Parallax Banner', count: 1, type: 'image' },
+            { id: 'portfolio', title: '4. Project Portfolio (Gallery)', count: 13, type: 'image' }, // 13 items in style 2/4
+            { id: 'tiktok', title: '5. TikTok Videos', count: 5, type: 'video' },
+            { id: 'media', title: '6. Media Gallery', count: 3, type: 'video' }
+        ];
 
-        // 5) Login Logic
-        window.checkLogin = function() {
-            const pass = document.getElementById('adminPass').value;
-            if(pass === "90632691") {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadCurrentSettings();
+        // --- Auth Logic ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadData();
             } else {
-                document.getElementById('errorMsg').style.display = 'block';
-            }
-        }
-
-        async function loadCurrentSettings() {
-            const docRef = doc(db, "trandy_settings", "config");
-            const docSnap = await getDoc(docRef);
-            if(docSnap.exists()) {
-                const data = docSnap.data();
-                document.getElementById('themeSelect').value = data.theme || 'theme-classic';
-                document.getElementById('pColor').value = data.primaryColor || '#E9762F';
-                document.getElementById('sColor').value = data.secondaryColor || '#1A3E5D';
-                document.getElementById('heroTitle').value = data.heroTitle || '';
-                document.getElementById('heroDesc').value = data.heroDesc || '';
-                document.getElementById('aboutTitle').value = data.aboutTitle || '';
-                document.getElementById('contactPhone').value = data.contactPhone || '';
-            }
-        }
-
-        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('saveBtn');
-            btn.textContent = "Saving...";
-            
-            const theme = document.getElementById('themeSelect').value;
-            const pColor = document.getElementById('pColor').value;
-            const sColor = document.getElementById('sColor').value;
-            const heroTitle = document.getElementById('heroTitle').value;
-            const heroDesc = document.getElementById('heroDesc').value;
-            const aboutTitle = document.getElementById('aboutTitle').value;
-            const contactPhone = document.getElementById('contactPhone').value;
-            
-            let heroBgUrl = null;
-            const file = document.getElementById('heroBgInput').files[0];
-
-            try {
-                if(file) {
-                    const storageRef = ref(storage, 'trandy/' + Date.now() + '-' + file.name);
-                    await uploadBytes(storageRef, file);
-                    heroBgUrl = await getDownloadURL(storageRef);
-                }
-
-                const dataToSave = {
-                    theme, primaryColor: pColor, secondaryColor: sColor,
-                    heroTitle, heroDesc, aboutTitle, contactPhone
-                };
-                
-                if(heroBgUrl) dataToSave.heroBgUrl = heroBgUrl;
-
-                await setDoc(doc(db, "trandy_settings", "config"), dataToSave, { merge: true });
-                alert("Website Updated Successfully!");
-
-            } catch(err) {
-                console.error(err);
-                alert("Error saving: " + err.message);
-            } finally {
-                btn.textContent = "Save Changes";
+                document.getElementById('login-panel').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
             }
         });
+
+        function login() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+        }
+        function logout() { auth.signOut(); }
+
+        // --- Generate Admin UI ---
+        function generateUI() {
+            const container = document.getElementById('content-manager');
+            container.innerHTML = '';
+
+            sections.forEach(sec => {
+                let html = `<div class="section-header">${sec.title}</div>`;
+                for(let i=0; i < sec.count; i++) {
+                    const key = sec.count === 1 ? sec.id : `${sec.id}_${i}`;
+                    html += `
+                    <div class="form-group">
+                        <label>${sec.type === 'video' ? 'Video' : 'Image'} ${i+1}</label>
+                        <input type="text" id="url_${key}" placeholder="Current URL">
+                        ${sec.type === 'image' ? `<img id="preview_${key}" class="preview-img" src="">` : ''}
+                        <input type="file" id="file_${key}" accept="${sec.type}/*">
+                        <button class="btn-upload" onclick="uploadFile('${key}', '${sec.id}')">Upload & Set</button>
+                    </div>`;
+                }
+                container.innerHTML += html;
+            });
+        }
+        generateUI();
+
+        // --- Data Logic ---
+        function loadData() {
+            db.ref('siteConfig').once('value').then(snap => {
+                const data = snap.val() || {};
+                
+                // Set Style
+                if(data.style) document.getElementById('styleSelector').value = data.style;
+
+                // Set URLs
+                sections.forEach(sec => {
+                    for(let i=0; i < sec.count; i++) {
+                        const key = sec.count === 1 ? sec.id : `${sec.id}_${i}`;
+                        const savedUrl = (data[sec.id] && data[sec.id][i]) ? data[sec.id][i] : ''; 
+                        
+                        // Handle single item vs array logic in DB
+                        let val = '';
+                        if(sec.count === 1) val = data[sec.id] || '';
+                        else val = (data[sec.id] && data[sec.id][i]) ? data[sec.id][i] : '';
+
+                        if(document.getElementById(`url_${key}`)) {
+                            document.getElementById(`url_${key}`).value = val;
+                            if(sec.type === 'image' && val) document.getElementById(`preview_${key}`).src = val;
+                        }
+                    }
+                });
+            });
+        }
+
+        function uploadFile(key, parentId) {
+            const fileInput = document.getElementById(`file_${key}`);
+            const file = fileInput.files[0];
+            if(!file) return alert("Please select a file first");
+
+            const ref = storage.ref(`uploads/${parentId}/${new Date().getTime()}_${file.name}`);
+            ref.put(file).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(url => {
+                    document.getElementById(`url_${key}`).value = url;
+                    if(document.getElementById(`preview_${key}`)) {
+                        document.getElementById(`preview_${key}`).src = url;
+                    }
+                    alert("Upload Successful!");
+                });
+            });
+        }
+
+        function saveData() {
+            const style = document.getElementById('styleSelector').value;
+            const updateData = { style: style };
+
+            sections.forEach(sec => {
+                if(sec.count === 1) {
+                    updateData[sec.id] = document.getElementById(`url_${sec.id}`).value;
+                } else {
+                    updateData[sec.id] = [];
+                    for(let i=0; i < sec.count; i++) {
+                        const key = `${sec.id}_${i}`;
+                        updateData[sec.id].push(document.getElementById(`url_${key}`).value);
+                    }
+                }
+            });
+
+            db.ref('siteConfig').set(updateData)
+                .then(() => alert("Website Updated Successfully! Go to index.html to see changes."))
+                .catch(err => alert(err.message));
+        }
     </script>
 </body>
 </html>
