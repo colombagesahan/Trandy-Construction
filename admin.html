@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trandy Admin Panel</title>
+    <!-- 2) Favicon Added -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Login Overlay */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1A3E5D; display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 300px; }
+        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        .btn { background: #E9762F; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn:hover { background: #d35400; }
+
+        /* Dashboard */
+        #dashboard { display: none; }
+        h2 { border-bottom: 2px solid #E9762F; padding-bottom: 10px; color: #1A3E5D; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .color-picker { height: 40px; padding: 2px; }
+        
+        .section-header { background: #eee; padding: 10px; margin-top: 20px; font-weight: bold; }
+        .preview-link { display: block; text-align: center; margin-bottom: 20px; color: #1A3E5D; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <img src="logo.png" alt="Logo" style="height: 50px; margin-bottom: 10px;">
+            <h3>Admin Login</h3>
+            <input type="password" id="adminPass" placeholder="Enter Password">
+            <button class="btn" onclick="checkLogin()">Login</button>
+            <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Wrong Password</p>
+        </div>
+    </div>
+
+    <div id="dashboard" class="container">
+        <a href="index.html" class="preview-link">← Back to Website</a>
+        <h2>Website Settings</h2>
+        
+        <form id="settingsForm">
+            <!-- 7) Templates -->
+            <div class="section-header">Appearance</div>
+            <div class="form-group">
+                <label>Select Template</label>
+                <select id="themeSelect">
+                    <option value="theme-classic">Classic (Orange/Blue)</option>
+                    <option value="theme-dark">Modern Dark (Gold/Black)</option>
+                    <option value="theme-nature">Eco Nature (Green/White)</option>
+                    <option value="theme-industrial">Industrial (Yellow/Grey)</option>
+                    <option value="theme-ocean">Ocean Glass (Blue/Glass)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Primary Color Override</label>
+                <input type="color" id="pColor" class="color-picker" value="#E9762F">
+            </div>
+            <div class="form-group">
+                <label>Secondary Color Override</label>
+                <input type="color" id="sColor" class="color-picker" value="#1A3E5D">
+            </div>
+
+            <!-- 6) Edit Texts -->
+            <div class="section-header">Text Content</div>
+            <div class="form-group">
+                <label>Hero Title</label>
+                <input type="text" id="heroTitle">
+            </div>
+            <div class="form-group">
+                <label>Hero Description</label>
+                <textarea id="heroDesc" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>About Title</label>
+                <input type="text" id="aboutTitle">
+            </div>
+            <div class="form-group">
+                <label>Contact Phone</label>
+                <input type="text" id="contactPhone">
+            </div>
+
+            <!-- 6) Upload Photos -->
+            <div class="section-header">Photos</div>
+            <div class="form-group">
+                <label>Main Hero Background</label>
+                <input type="file" id="heroBgInput">
+                <small>Leave empty to keep current</small>
+            </div>
+
+            <button type="submit" class="btn" id="saveBtn">Save Changes</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBUjzMFao9BS3uXBOW3qYrLVqHaGn8qIk4",
+          authDomain: "onlineshop-30cd1.firebaseapp.com",
+          projectId: "onlineshop-30cd1",
+          storageBucket: "onlineshop-30cd1.firebasestorage.app",
+          messagingSenderId: "818252574868",
+          appId: "1:818252574868:web:8dd36825db589a886cc481",
+          measurementId: "G-6YLGGH2NDD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // 5) Login Logic
+        window.checkLogin = function() {
+            const pass = document.getElementById('adminPass').value;
+            if(pass === "90632691") {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadCurrentSettings();
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        async function loadCurrentSettings() {
+            const docRef = doc(db, "trandy_settings", "config");
+            const docSnap = await getDoc(docRef);
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('themeSelect').value = data.theme || 'theme-classic';
+                document.getElementById('pColor').value = data.primaryColor || '#E9762F';
+                document.getElementById('sColor').value = data.secondaryColor || '#1A3E5D';
+                document.getElementById('heroTitle').value = data.heroTitle || '';
+                document.getElementById('heroDesc').value = data.heroDesc || '';
+                document.getElementById('aboutTitle').value = data.aboutTitle || '';
+                document.getElementById('contactPhone').value = data.contactPhone || '';
+            }
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            btn.textContent = "Saving...";
+            
+            const theme = document.getElementById('themeSelect').value;
+            const pColor = document.getElementById('pColor').value;
+            const sColor = document.getElementById('sColor').value;
+            const heroTitle = document.getElementById('heroTitle').value;
+            const heroDesc = document.getElementById('heroDesc').value;
+            const aboutTitle = document.getElementById('aboutTitle').value;
+            const contactPhone = document.getElementById('contactPhone').value;
+            
+            let heroBgUrl = null;
+            const file = document.getElementById('heroBgInput').files[0];
+
+            try {
+                if(file) {
+                    const storageRef = ref(storage, 'trandy/' + Date.now() + '-' + file.name);
+                    await uploadBytes(storageRef, file);
+                    heroBgUrl = await getDownloadURL(storageRef);
+                }
+
+                const dataToSave = {
+                    theme, primaryColor: pColor, secondaryColor: sColor,
+                    heroTitle, heroDesc, aboutTitle, contactPhone
+                };
+                
+                if(heroBgUrl) dataToSave.heroBgUrl = heroBgUrl;
+
+                await setDoc(doc(db, "trandy_settings", "config"), dataToSave, { merge: true });
+                alert("Website Updated Successfully!");
+
+            } catch(err) {
+                console.error(err);
+                alert("Error saving: " + err.message);
+            } finally {
+                btn.textContent = "Save Changes";
+            }
+        });
+    </script>
+</body>
+</html>
